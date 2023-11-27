@@ -1,0 +1,23 @@
+﻿@using global::ShoppingList.DTO.Models
+@inject IMediator mediator
+
+@page "/shopping-list"
+@page "/shopping-list/{ShoppingListId:int}"
+@* @rendermode InteractiveServer *@
+@attribute [StreamRendering]
+
+<h3>ShoppingList</h3>
+
+
+@code {
+    [Parameter] public int? ShoppingListId { get; set; }
+    ShoppingListDetails shoppingListDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ShoppingListId is not null)
+        {
+            shoppingListDetails = await mediator.Send(new FindShoppingListQuery(ShoppingListId.Value));
+        }
+    }
+}

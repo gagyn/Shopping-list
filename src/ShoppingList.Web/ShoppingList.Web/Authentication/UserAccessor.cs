@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using ShoppingList.DTO.Exceptions;
+﻿using ShoppingList.DTO.Exceptions;
 using System.Security.Claims;
 
 namespace ShoppingList.Infrastructure.Authentication;

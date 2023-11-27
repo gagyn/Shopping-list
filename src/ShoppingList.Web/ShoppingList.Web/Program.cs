@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.Infrastructure.Authentication;
 using ShoppingList.Infrastructure.Database.Configurations;
+using ShoppingList.Infrastructure.QueryHandlers;
 using ShoppingList.Web.Client.Pages;
 using ShoppingList.Web.Components;
 using ShoppingList.Web.Components.Account;
@@ -11,13 +12,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveServerComponents();
 
 builder.Services.AddCascadingAuthenticationState()
     .AddScoped<IdentityUserAccessor>()
     .AddScoped<IdentityRedirectManager>()
     .AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>()
+    .AddTransient<IUserAccessor, UserAccessor>()
     .AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(options =>
@@ -31,12 +32,21 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ShoppingListContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddIdentityCore<ApplicationUserEntity>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services
+    .AddIdentityCore<ApplicationUserEntity>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+    })
     .AddEntityFrameworkStores<ShoppingListContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUserEntity>, IdentityNoOpEmailSender>();
+builder.Services.AddSingleton<IEmailSender<ApplicationUserEntity>, IdentityNoOpEmailSender>()
+    .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<FindShoppingListQueryHandler>());
 
 var app = builder.Build();
 
@@ -60,10 +70,17 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Counter).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<ShoppingListContext>();
+
+    dbContext.Database.Migrate();
+}
 
 app.Run();

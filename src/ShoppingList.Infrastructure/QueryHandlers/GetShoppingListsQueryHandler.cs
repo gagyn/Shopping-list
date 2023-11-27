@@ -11,7 +11,8 @@ public class GetShoppingListsQueryHandler(
 {
     public async Task<IReadOnlyCollection<DTO.Models.ShoppingList>> Handle(GetShoppingListsQuery request, CancellationToken cancellationToken)
         => await dbContext.ShoppingLists
-            .Where(x => x.OwnedByUserId == userAccessor.Id)
+            .Where(x => x.OwnedByUserId == userAccessor.Id
+                && (string.IsNullOrEmpty(request.Name) || x.Name.StartsWith(request.Name)))
             .Select(x => new DTO.Models.ShoppingList(x.Id, x.Name))
             .ToListAsync(cancellationToken);
 }

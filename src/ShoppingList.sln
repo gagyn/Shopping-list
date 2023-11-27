@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Web.Client", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Domain", "ShoppingList.Domain\ShoppingList.Domain.csproj", "{FA9DD4E1-BE8F-42AF-BB0B-BB6791E2FAA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Infrastructure", "ShoppingList.Infrastructure\ShoppingList.Infrastructure.csproj", "{822601E8-02BD-4730-A6ED-04FA71EDC8DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Infrastructure", "ShoppingList.Infrastructure\ShoppingList.Infrastructure.csproj", "{822601E8-02BD-4730-A6ED-04FA71EDC8DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.DTO", "ShoppingList.DTO\ShoppingList.DTO.csproj", "{9DFEFFCC-793C-40B9-8E5D-C2F238BC9182}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.DTO", "ShoppingList.DTO\ShoppingList.DTO.csproj", "{9DFEFFCC-793C-40B9-8E5D-C2F238BC9182}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

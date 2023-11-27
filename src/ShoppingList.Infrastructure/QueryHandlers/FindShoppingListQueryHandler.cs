@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using ShoppingList.Domain.ShoppingList;
+using ShoppingList.DTO.Exceptions;
 using ShoppingList.DTO.Models;
 using ShoppingList.DTO.Queries;
 using ShoppingList.Infrastructure.Authentication;
@@ -14,9 +16,9 @@ public class FindShoppingListQueryHandler(
     public async Task<ShoppingListDetails> Handle(FindShoppingListQuery request, CancellationToken cancellationToken)
     {
         var shoppingList = await dbContext.ShoppingLists.FindOrThrowAsync(request.Id, cancellationToken);
-        if (shoppingList == null || shoppingList.OwnedByUserId != userAccessor.Id)
+        if (shoppingList.OwnedByUserId != userAccessor.Id)
         {
-            throw new UnauthorizedAccessException();
+            throw new EntityNotFoundException<ShoppingListEntity>();
         }
 
         var products = shoppingList.Products.Select(x => new Product(x.Id, x.ProductName, x.ProductDescription, x.Amount, x.Completed));

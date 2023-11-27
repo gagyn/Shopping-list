@@ -1,0 +1,18 @@
+﻿@using ShoppingListDto = DTO.Models.ShoppingList;
+@inject IMediator mediator;
+
+@page "/my-shopping-lists"
+@attribute [StreamRendering]
+
+<PageTitle>Moje listy zakupów</PageTitle>
+
+<h3>MyShoppingLists</h3>
+
+@code {
+    IReadOnlyCollection<ShoppingListDto> shoppingLists;
+
+    protected override async Task OnInitializedAsync()
+    {
+        shoppingLists = await mediator.Send(new GetShoppingListsQuery());
+    }
+}

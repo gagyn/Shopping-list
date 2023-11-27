@@ -11,6 +11,7 @@ public class ShoppingListContext(DbContextOptions options) : IdentityDbContext<A
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ShoppingListContext).Assembly);
     }
 }
