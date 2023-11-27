@@ -6,12 +6,34 @@
 @* @rendermode InteractiveServer *@
 @attribute [StreamRendering]
 
-<h3>ShoppingList</h3>
-
+@if (shoppingListDetails is null)
+{
+    <p>Ładowanie...</p>
+}
+else
+{
+    <div>
+        <span>@shoppingListDetails.Name</span>
+        @if (shoppingListDetails.Products?.Any() != true)
+        {
+            <span>Nie masz jeszcze dodanego żadnego produktu do listy.</span>
+        }
+        else
+        {
+            foreach (var product in shoppingListDetails.Products)
+            {
+                <span>@product.Name</span>
+                <span>@product.Amount</span>
+                <span>@product.Description</span>
+                <span>@product.Completed</span>
+            }
+        }
+    </div>
+}
 
 @code {
     [Parameter] public int? ShoppingListId { get; set; }
-    ShoppingListDetails shoppingListDetails;
+    ShoppingListDetails? shoppingListDetails;
 
     protected override async Task OnInitializedAsync()
     {

@@ -6,7 +6,13 @@
 
 <PageTitle>Moje listy zakupów</PageTitle>
 
-<h3>MyShoppingLists</h3>
+@if (shoppingLists is not null)
+{
+    foreach (var list in shoppingLists)
+    {
+        <ShoppingList ShoppingListId="list.Id" />
+    }
+}
 
 @code {
     IReadOnlyCollection<ShoppingListDto> shoppingLists;

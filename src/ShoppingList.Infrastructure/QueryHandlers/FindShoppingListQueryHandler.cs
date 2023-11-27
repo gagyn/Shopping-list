@@ -21,7 +21,7 @@ public class FindShoppingListQueryHandler(
             throw new EntityNotFoundException<ShoppingListEntity>();
         }
 
-        var products = shoppingList.Products.Select(x => new Product(x.Id, x.ProductName, x.ProductDescription, x.Amount, x.Completed));
-        return new(shoppingList.Id, shoppingList.Name, products.ToList());
+        var products = shoppingList.Products?.Select(x => new Product(x.Id, x.ProductName, x.ProductDescription, x.Amount, x.Completed));
+        return new(shoppingList.Id, shoppingList.Name, products?.ToList() ?? []);
     }
 }
