@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ShoppingList.DTO.Commands;
 using ShoppingList.Infrastructure.Authentication;
-using ShoppingList.Infrastructure.Database.Configurations;
+using ShoppingList.Infrastructure.Database;
 using ShoppingList.Infrastructure.Extensions;
 
 namespace ShoppingList.Infrastructure.CommandHandlers;

@@ -1,4 +1,5 @@
 ﻿@using ShoppingListDto = DTO.Models.ShoppingList;
+@inject NavigationManager Nav
 @inject IMediator mediator;
 
 @page "/my-shopping-lists"
@@ -6,16 +7,24 @@
 
 <PageTitle>Moje listy zakupów</PageTitle>
 
+<h4>Moje listy zakupów:</h4>
+
 @if (shoppingLists is not null)
 {
     foreach (var list in shoppingLists)
     {
-        <ShoppingList ShoppingListId="list.Id" />
+        var link = $"shopping-list/{list.Id}";
+        <p>
+            <NavLink href="@link">@list.Name</NavLink>
+        </p>
     }
+    <p>
+        <NavLink href="shopping-list">Dodaj nową listę...</NavLink>
+    </p>
 }
 
 @code {
-    IReadOnlyCollection<ShoppingListDto> shoppingLists;
+    IReadOnlyCollection<ShoppingListDto>? shoppingLists;
 
     protected override async Task OnInitializedAsync()
     {

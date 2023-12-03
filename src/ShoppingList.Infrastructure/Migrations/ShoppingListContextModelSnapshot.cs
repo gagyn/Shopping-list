@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ShoppingList.Infrastructure.Database.Configurations;
+using ShoppingList.Infrastructure.Database;
 
 #nullable disable
 
@@ -153,41 +153,6 @@ namespace ShoppingList.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("ShoppingList.Domain.ShoppingList.ProductEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Completed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ProductDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ShoppingListEntityId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ShoppingListId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShoppingListEntityId");
-
-                    b.ToTable("ProductEntity");
                 });
 
             modelBuilder.Entity("ShoppingList.Domain.ShoppingList.ShoppingListEntity", b =>
@@ -339,15 +304,41 @@ namespace ShoppingList.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ShoppingList.Domain.ShoppingList.ProductEntity", b =>
-                {
-                    b.HasOne("ShoppingList.Domain.ShoppingList.ShoppingListEntity", null)
-                        .WithMany("Products")
-                        .HasForeignKey("ShoppingListEntityId");
-                });
-
             modelBuilder.Entity("ShoppingList.Domain.ShoppingList.ShoppingListEntity", b =>
                 {
+                    b.OwnsMany("ShoppingList.Domain.ShoppingList.ProductEntity", "Products", b1 =>
+                        {
+                            b1.Property<int>("ShoppingListId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<int>("Amount")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("Completed")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("ProductDescription")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("ProductName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ShoppingListId", "Id");
+
+                            b1.ToTable("ProductEntity");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ShoppingListId");
+                        });
+
                     b.Navigation("Products");
                 });
 #pragma warning restore 612, 618

@@ -4,7 +4,7 @@ using ShoppingList.DTO.Exceptions;
 using ShoppingList.DTO.Models;
 using ShoppingList.DTO.Queries;
 using ShoppingList.Infrastructure.Authentication;
-using ShoppingList.Infrastructure.Database.Configurations;
+using ShoppingList.Infrastructure.Database;
 using ShoppingList.Infrastructure.Extensions;
 
 namespace ShoppingList.Infrastructure.QueryHandlers;

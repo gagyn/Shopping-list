@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ShoppingList.Domain.ShoppingList;
 using ShoppingList.Infrastructure.Authentication;
 
-namespace ShoppingList.Infrastructure.Database.Configurations;
+namespace ShoppingList.Infrastructure.Database;
 public class ShoppingListContext(DbContextOptions options) : IdentityDbContext<ApplicationUserEntity>(options)
 {
     public const string SchemaName = "shoppingList";

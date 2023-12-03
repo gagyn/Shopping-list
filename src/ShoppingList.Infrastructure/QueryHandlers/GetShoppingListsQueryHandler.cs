@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.DTO.Queries;
 using ShoppingList.Infrastructure.Authentication;
-using ShoppingList.Infrastructure.Database.Configurations;
+using ShoppingList.Infrastructure.Database;
 
 namespace ShoppingList.Infrastructure.QueryHandlers;
 public class GetShoppingListsQueryHandler(

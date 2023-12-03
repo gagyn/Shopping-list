@@ -2,7 +2,7 @@
 using ShoppingList.Domain.ShoppingList;
 using ShoppingList.DTO.Commands;
 using ShoppingList.Infrastructure.Authentication;
-using ShoppingList.Infrastructure.Database.Configurations;
+using ShoppingList.Infrastructure.Database;
 
 namespace ShoppingList.Infrastructure.CommandHandlers;
 public class CreateShoppingListCommandHandler(

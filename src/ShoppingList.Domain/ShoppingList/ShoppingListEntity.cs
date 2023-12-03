@@ -27,4 +27,10 @@ public class ShoppingListEntity : BaseEntity
         Products.Add(product);
         SetModified(modifiedBy);
     }
+
+    public void UpdateName(string name, string modifiedBy)
+    {
+        Name = name;
+        this.SetModified(modifiedBy);
+    }
 }
