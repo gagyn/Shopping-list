@@ -20,7 +20,7 @@
     <button type="submit">Zapisz</button>
 </EditForm>
 
-@if (ShoppingListModel is not null)
+@if (ShoppingListId is not null)
 {
     <div>
         @foreach (var product in ShoppingListModel.Products)
@@ -63,7 +63,10 @@
             ? ShoppingListModel!.Products.First(x => x.Id == productId)
             : ShoppingListModel!.Products.Last();
 
-        var command = new AddProductToShoppingListCommand(ShoppingListModel.Id, product.Name!, product.Description!, product.Amount);
+        IRequest command = productId.HasValue
+            ? new UpdateProductCommand(ShoppingListModel.Id, productId.Value, product.Name!, product.Description!, product.Amount, product.Completed)
+            : new AddProductToShoppingListCommand(ShoppingListModel.Id, product.Name!, product.Description!, product.Amount);
+
         await mediator.Send(command);
         Nav.Refresh();
     }
@@ -72,11 +75,11 @@
     {
         if (ShoppingListId is null)
         {
-            await mediator.Send(new CreateShoppingListCommand(ShoppingListModel!.Name!));
+            ShoppingListId = await mediator.Send(new CreateShoppingListCommand(ShoppingListModel!.Name!));
         }
         else
         {
-            await mediator.Send(new UpdateShoppingListCommand(ShoppingListModel!.Id, ShoppingListModel!.Name!));
+            ShoppingListId = await mediator.Send(new UpdateShoppingListCommand(ShoppingListModel!.Id, ShoppingListModel!.Name!));
         }
     }
 }

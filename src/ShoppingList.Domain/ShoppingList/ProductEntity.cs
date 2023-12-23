@@ -27,4 +27,12 @@ public class ProductEntity
     public void Complete() => Completed = true;
 
     public void Uncomplete() => Completed = false;
+
+    public void Update(string productName, string productDescription, int amount, bool completed)
+    {
+        ProductName = productName;
+        ProductDescription = productDescription;
+        Amount = amount;
+        Completed = completed;
+    }
 }
