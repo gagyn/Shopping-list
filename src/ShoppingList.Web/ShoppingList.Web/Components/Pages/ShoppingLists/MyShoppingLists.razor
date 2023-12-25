@@ -1,5 +1,4 @@
-﻿@using ShoppingListDto = DTO.Models.ShoppingList;
-@inject NavigationManager Nav
+﻿@inject NavigationManager Nav
 @inject IMediator mediator;
 
 @page "/my-shopping-lists"
@@ -24,7 +23,7 @@
 }
 
 @code {
-    IReadOnlyCollection<ShoppingListDto>? shoppingLists;
+    IReadOnlyCollection<ShoppingListShort>? shoppingLists;
 
     protected override async Task OnInitializedAsync()
     {

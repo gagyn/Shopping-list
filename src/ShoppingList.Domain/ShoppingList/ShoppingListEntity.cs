@@ -1,4 +1,5 @@
 ﻿using ShoppingList.Domain.Base;
+using ShoppingList.Domain.Exceptions;
 
 namespace ShoppingList.Domain.ShoppingList;
 public class ShoppingListEntity : BaseEntity
@@ -21,16 +22,24 @@ public class ShoppingListEntity : BaseEntity
     public static ShoppingListEntity Create(string name, Guid ownedByUserId, string createdBy)
         => new(name, ownedByUserId, createdBy);
 
-    public void AddProduct(string productName, string productDescription, int amount, string modifiedBy)
+    public ProductEntity AddProduct(string productName, string productDescription, int amount, string modifiedBy)
     {
         var product = ProductEntity.Create(Id, productName, productDescription, amount);
         Products.Add(product);
         SetModified(modifiedBy);
+        return product;
     }
 
     public void UpdateName(string name, string modifiedBy)
     {
         Name = name;
         this.SetModified(modifiedBy);
+    }
+
+    public void RemoveProduct(int productId)
+    {
+        var product = Products.FirstOrDefault(x => x.Id == productId)
+            ?? throw new EntityNotFoundException<ProductEntity>();
+        Products.Remove(product);
     }
 }

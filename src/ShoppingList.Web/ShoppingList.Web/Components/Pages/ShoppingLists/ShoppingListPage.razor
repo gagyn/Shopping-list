@@ -1,0 +1,63 @@
+﻿@inject NavigationManager Nav
+@inject IMediator Mediator
+
+@page "/shopping-list"
+@page "/shopping-list/{ShoppingListId:int}"
+@rendermode InteractiveServer
+
+@if (ShoppingListModel is null)
+{
+    <p>Ładowanie...</p>
+    return;
+}
+
+<EditForm Model="@ShoppingListModel" OnSubmit="AddOrUpdateShoppingList" FormName="ShoppingListForm">
+    <InputText @bind-Value="ShoppingListModel.Name" placeholder="Wprowadź nazwę nowej listy" />
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</EditForm>
+
+@if (ShoppingListId is not null)
+{
+    <div>
+        @foreach (var product in ShoppingListModel.Products)
+        {
+            <Product ShoppingListId="ShoppingListId" ProductModel="product" OnProductRemoval="OnProductRemoval" />
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public int? ShoppingListId { get; set; }
+    [SupplyParameterFromForm] private ShoppingListDetails? ShoppingListModel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ShoppingListId is null)
+        {
+            ShoppingListModel = new();
+        }
+        else
+        {
+            ShoppingListModel = await Mediator.Send(new FindShoppingListQuery(ShoppingListId.Value));
+        }
+        ShoppingListModel.Products.Add(new ProductDetails());
+    }    
+
+    private async Task AddOrUpdateShoppingList()
+    {
+        if (ShoppingListId is null)
+        {
+            ShoppingListId = await Mediator.Send(new CreateShoppingListCommand(ShoppingListModel!.Name!));
+        }
+        else
+        {
+            await Mediator.Send(new UpdateShoppingListCommand(ShoppingListModel!.Id, ShoppingListModel!.Name!));
+        }
+    }
+
+    private void OnProductRemoval(ProductDetails product)
+    {
+        ShoppingListModel!.Products.Remove(product);
+        Nav.Refresh();
+    }
+}

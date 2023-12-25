@@ -1,20 +1,21 @@
 ﻿using MediatR;
+using ShoppingList.Domain.Repositories;
 using ShoppingList.DTO.Commands;
 using ShoppingList.Infrastructure.Authentication;
-using ShoppingList.Infrastructure.Database;
-using ShoppingList.Infrastructure.Extensions;
 
 namespace ShoppingList.Infrastructure.CommandHandlers;
 public class AddProductToShoppingListCommandHandler(
-    ShoppingListContext dbContext,
-    IUserAccessor userAccessor) : IRequestHandler<AddProductToShoppingListCommand>
+    IShoppingListRepository shoppingListRepository,
+    IUserAccessor userAccessor) : IRequestHandler<AddProductToShoppingListCommand, int>
 {
-    public async Task Handle(AddProductToShoppingListCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(AddProductToShoppingListCommand request, CancellationToken cancellationToken)
     {
-        var shoppingList = await dbContext.ShoppingLists.FindOrThrowAsync(request.ShoppingListId, cancellationToken);
+        var shoppingList = await shoppingListRepository.FindOrThrow(request.ShoppingListId, userAccessor.Id, cancellationToken);
 
-        shoppingList.AddProduct(request.Name, request.Description, request.Amount, userAccessor.UserName);
+        var product = shoppingList.AddProduct(request.Name, request.Description, request.Amount, userAccessor.UserName);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await shoppingListRepository.SaveChanges(cancellationToken);
+
+        return product.Id;
     }
 }

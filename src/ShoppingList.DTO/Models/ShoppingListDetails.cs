@@ -1,12 +1,16 @@
 ﻿namespace ShoppingList.DTO.Models;
 public class ShoppingListDetails
 {
+    public ShoppingListDetails()
+    {
+    }
+
     public ShoppingListDetails(string name)
     {
         Name = name;
     }
 
-    public ShoppingListDetails(int id, string name, IReadOnlyCollection<Product> products)
+    public ShoppingListDetails(int id, string name, ICollection<ProductDetails> products)
     {
         Id = id;
         Name = name;
@@ -15,5 +19,5 @@ public class ShoppingListDetails
 
     public int Id { get; set; }
     public string Name { get; set; }
-    public IReadOnlyCollection<Product> Products { get; set; } = [];
+    public ICollection<ProductDetails> Products { get; set; } = [];
 }

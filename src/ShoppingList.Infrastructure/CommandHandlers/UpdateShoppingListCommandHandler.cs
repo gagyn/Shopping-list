@@ -8,9 +8,9 @@ namespace ShoppingList.Infrastructure.CommandHandlers;
 
 public class UpdateShoppingListCommandHandler(
     ShoppingListContext dbContext,
-    IUserAccessor userAccessor) : IRequestHandler<UpdateShoppingListCommand, int>
+    IUserAccessor userAccessor) : IRequestHandler<UpdateShoppingListCommand>
 {
-    public async Task<int> Handle(UpdateShoppingListCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateShoppingListCommand request, CancellationToken cancellationToken)
     {
         var shoppingList = await dbContext.ShoppingLists.FirstOrDefaultAsync(x => x.Id == request.Id && x.OwnedByUserId == userAccessor.Id)
             ?? throw new Exception("Shopping list not found.");
@@ -18,7 +18,5 @@ public class UpdateShoppingListCommandHandler(
         shoppingList.UpdateName(request.Name, userAccessor.UserName);
 
         await dbContext.SaveChangesAsync(cancellationToken);
-
-        return shoppingList.Id;
     }
 }

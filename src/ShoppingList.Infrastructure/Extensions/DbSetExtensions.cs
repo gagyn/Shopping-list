@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShoppingList.Domain.Base;
-using ShoppingList.DTO.Exceptions;
+using ShoppingList.Domain.Exceptions;
 
 namespace ShoppingList.Infrastructure.Extensions;
 public static class DbSetExtensions

@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ShoppingList.Domain.Repositories;
 using ShoppingList.Infrastructure.Authentication;
 using ShoppingList.Infrastructure.Database;
 using ShoppingList.Infrastructure.QueryHandlers;
+using ShoppingList.Infrastructure.Repositories;
 using ShoppingList.Web.Client.Pages;
 using ShoppingList.Web.Components;
 using ShoppingList.Web.Components.Account;
@@ -48,6 +50,8 @@ builder.Services
 
 builder.Services
     .AddSingleton<IEmailSender<ApplicationUserEntity>, IdentityNoOpEmailSender>()
+    .AddScoped<IShoppingListRepository, ShoppingListRepository>()
+    .AddScoped<IProductRepository, ProductRepository>()
     .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<FindShoppingListQueryHandler>());
 
 var app = builder.Build();

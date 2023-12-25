@@ -1,0 +1,75 @@
+﻿@inject NavigationManager Nav
+@inject IMediator mediator
+@rendermode InteractiveServer
+
+<EditForm Model="@ProductModel" OnSubmit="AddOrUpdateProduct" FormName="@($"ProductForm{ProductModel.Id}")">
+    <InputText @bind-Value="ProductModel.Name" placeholder="Podaj nazwę produktu" />
+    <InputNumber @bind-Value="ProductModel.Amount" placeholder="Podaj ilość tego produktu" />
+    <InputText @bind-Value="ProductModel.Description" placeholder="Wprowadź opis" />
+    @if (ProductModel.Id.HasValue)
+    {
+        <InputCheckbox @bind-Value="ProductModel.Completed" DisplayName="Czy zakupiono" />
+    }
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    @if (ProductModel.Id.HasValue)
+    {
+        <button type="button" class="btn btn-danger" @onclick="RemoveProduct">Usuń</button>
+    }
+</EditForm>
+<div class="message">@message</div>
+
+@code {
+    [Parameter] public int? ShoppingListId { get; set; }
+    [Parameter] public ProductDetails ProductModel { get; set; }
+    [Parameter] public Action<ProductDetails> OnProductRemoval { get; set; } = _ => { };
+
+    string? message;
+
+    private async Task AddOrUpdateProduct()
+    {
+        var productAlreadyExists = ProductModel.Id.HasValue;
+        if (productAlreadyExists)
+        {
+            var command = new UpdateProductCommand(
+                ShoppingListId!.Value,
+                ProductModel.Id!.Value,
+                ProductModel.Name!,
+                ProductModel.Description!,
+                ProductModel.Amount!.Value,
+                ProductModel.Completed);
+
+            await mediator.Send(command);
+        }
+        else
+        {
+            var command = new AddProductToShoppingListCommand(
+                ShoppingListId!.Value,
+                ProductModel.Name!, 
+                ProductModel.Description!,
+                ProductModel.Amount!.Value);
+
+            ProductModel.Id = await mediator.Send(command);
+        }
+        ShowMessage("Product updated");
+        Nav.Refresh();
+    }
+
+    private async Task RemoveProduct()
+    {
+        var command = new RemoveProductCommand(ShoppingListId!.Value, ProductModel.Id!.Value);
+        await mediator.Send(command);
+
+        OnProductRemoval(ProductModel);
+        ShowMessage("Product removed");
+        Nav.Refresh();
+    }
+
+    private async void ShowMessage(string message)
+    {
+        this.message = message;
+        await Task.Delay(2000);
+        this.message = null;
+        this.StateHasChanged();
+        Nav.Refresh();
+    }
+}

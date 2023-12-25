@@ -1,6 +1,6 @@
 ﻿using MediatR;
+using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.ShoppingList;
-using ShoppingList.DTO.Exceptions;
 using ShoppingList.DTO.Models;
 using ShoppingList.DTO.Queries;
 using ShoppingList.Infrastructure.Authentication;
@@ -21,7 +21,7 @@ public class FindShoppingListQueryHandler(
             throw new EntityNotFoundException<ShoppingListEntity>();
         }
 
-        var products = shoppingList.Products?.Select(x => new Product(x.Id, x.ProductName, x.ProductDescription, x.Amount, x.Completed));
+        var products = shoppingList.Products?.Select(x => new ProductDetails(x.Id, x.ProductName, x.ProductDescription, x.Amount, x.Completed));
         return new(shoppingList.Id, shoppingList.Name, products?.ToList() ?? []);
     }
 }

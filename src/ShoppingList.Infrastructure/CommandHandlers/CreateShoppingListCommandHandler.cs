@@ -1,21 +1,21 @@
 ﻿using MediatR;
+using ShoppingList.Domain.Repositories;
 using ShoppingList.Domain.ShoppingList;
 using ShoppingList.DTO.Commands;
 using ShoppingList.Infrastructure.Authentication;
-using ShoppingList.Infrastructure.Database;
 
 namespace ShoppingList.Infrastructure.CommandHandlers;
 public class CreateShoppingListCommandHandler(
-    ShoppingListContext dbContext,
+    IShoppingListRepository shoppingListRepository,
     IUserAccessor userAccessor) : IRequestHandler<CreateShoppingListCommand, int>
 {
     public async Task<int> Handle(CreateShoppingListCommand request, CancellationToken cancellationToken)
     {
         var shoppingList = ShoppingListEntity.Create(request.Name, userAccessor.Id, userAccessor.UserName);
 
-        dbContext.ShoppingLists.Add(shoppingList);
+        shoppingListRepository.Add(shoppingList);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await shoppingListRepository.SaveChanges(cancellationToken);
 
         return shoppingList.Id;
     }
