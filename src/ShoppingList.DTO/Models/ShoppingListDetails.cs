@@ -10,7 +10,7 @@ public class ShoppingListDetails
         Name = name;
     }
 
-    public ShoppingListDetails(int id, string name, ICollection<ProductDetails> products)
+    public ShoppingListDetails(int id, string name, IList<ProductDetails> products)
     {
         Id = id;
         Name = name;
@@ -19,5 +19,5 @@ public class ShoppingListDetails
 
     public int Id { get; set; }
     public string Name { get; set; }
-    public ICollection<ProductDetails> Products { get; set; } = [];
+    public IList<ProductDetails> Products { get; set; } = [];
 }
