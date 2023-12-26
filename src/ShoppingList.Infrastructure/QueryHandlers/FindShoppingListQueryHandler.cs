@@ -6,6 +6,7 @@ using ShoppingList.DTO.Queries;
 using ShoppingList.Infrastructure.Authentication;
 using ShoppingList.Infrastructure.Database;
 using ShoppingList.Infrastructure.Extensions;
+using Unit = ShoppingList.DTO.Models.Unit;
 
 namespace ShoppingList.Infrastructure.QueryHandlers;
 
@@ -21,7 +22,7 @@ public class FindShoppingListQueryHandler(
             throw new EntityNotFoundException<ShoppingListEntity>();
         }
 
-        var products = shoppingList.Products?.Select(x => new ProductDetails(x.Id, x.ProductName, x.ProductDescription, x.Amount, x.Completed));
+        var products = shoppingList.Products?.Select(x => new ProductDetails(x.Id, x.ProductName, x.ProductDescription, x.Amount, x.Completed, x.Unit.Parse<Unit>()));
         return new(shoppingList.Id, shoppingList.Name, products?.ToList() ?? []);
     }
 }

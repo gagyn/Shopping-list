@@ -22,9 +22,9 @@ public class ShoppingListEntity : BaseEntity
     public static ShoppingListEntity Create(string name, Guid ownedByUserId, string createdBy)
         => new(name, ownedByUserId, createdBy);
 
-    public ProductEntity AddProduct(string productName, string productDescription, int amount, string modifiedBy)
+    public ProductEntity AddProduct(string productName, string productDescription, decimal amount, string modifiedBy, UnitEntity unit)
     {
-        var product = ProductEntity.Create(Id, productName, productDescription, amount);
+        var product = ProductEntity.Create(Id, productName, productDescription, amount, unit);
         Products.Add(product);
         SetModified(modifiedBy);
         return product;

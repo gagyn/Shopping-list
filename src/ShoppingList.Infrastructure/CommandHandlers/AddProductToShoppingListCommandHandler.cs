@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using ShoppingList.Domain.Repositories;
+using ShoppingList.Domain.ShoppingList;
 using ShoppingList.DTO.Commands;
 using ShoppingList.Infrastructure.Authentication;
+using ShoppingList.Infrastructure.Extensions;
 
 namespace ShoppingList.Infrastructure.CommandHandlers;
 public class AddProductToShoppingListCommandHandler(
@@ -12,7 +14,12 @@ public class AddProductToShoppingListCommandHandler(
     {
         var shoppingList = await shoppingListRepository.FindOrThrow(request.ShoppingListId, userAccessor.Id, cancellationToken);
 
-        var product = shoppingList.AddProduct(request.Name, request.Description, request.Amount, userAccessor.UserName);
+        var product = shoppingList.AddProduct(
+            request.Name,
+            request.Description,
+            request.Amount,
+            userAccessor.UserName,
+            request.Unit.Parse<UnitEntity>());
 
         await shoppingListRepository.SaveChanges(cancellationToken);
 

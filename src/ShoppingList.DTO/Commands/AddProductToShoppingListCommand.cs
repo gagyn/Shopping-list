@@ -5,4 +5,5 @@ public record AddProductToShoppingListCommand(
     int ShoppingListId,
     string Name,
     string Description,
-    int Amount) : IRequest<int>;
+    decimal Amount,
+    Models.Unit Unit) : IRequest<int>;

@@ -1,10 +1,17 @@
-﻿@inject NavigationManager Nav
+﻿@using ShoppingList.Infrastructure.Extensions
+@inject NavigationManager Nav
 @inject IMediator mediator
 @rendermode InteractiveServer
 
 <EditForm Model="@ProductModel" OnSubmit="AddOrUpdateProduct" FormName="@($"ProductForm{ProductModel.Id}")">
     <InputText @bind-Value="ProductModel.Name" placeholder="Podaj nazwę produktu" />
     <InputNumber @bind-Value="ProductModel.Amount" placeholder="Podaj ilość tego produktu" />
+    <InputSelect @bind-Value="ProductModel.Unit" placeholder="Wybierz jednostkę">
+        @foreach (var (name, description) in EnumExtensions.GetDescriptions<DTO.Models.Unit>())
+        {
+            <option value="@name">@description</option>
+        }
+    </InputSelect>
     <InputText @bind-Value="ProductModel.Description" placeholder="Wprowadź opis" />
     @if (ProductModel.Id.HasValue)
     {
@@ -37,7 +44,8 @@
                 ProductModel.Name!,
                 ProductModel.Description!,
                 ProductModel.Amount!.Value,
-                ProductModel.Completed);
+                ProductModel.Completed,
+                ProductModel.Unit);
 
             await mediator.Send(command);
             ShowMessage("Zmieniono produkt.");
@@ -48,7 +56,8 @@
                 ShoppingListId!.Value,
                 ProductModel.Name!, 
                 ProductModel.Description!,
-                ProductModel.Amount!.Value);
+                ProductModel.Amount!.Value,
+                ProductModel.Unit);
 
             ProductModel.Id = await mediator.Send(command);
             ShowMessage("Dodano produkt.");

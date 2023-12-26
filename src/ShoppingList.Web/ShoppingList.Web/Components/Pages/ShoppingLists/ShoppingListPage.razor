@@ -43,7 +43,7 @@
         {
             ShoppingListModel = await Mediator.Send(new FindShoppingListQuery(ShoppingListId.Value));
         }
-        ShoppingListModel.Products.Add(new ProductDetails());
+        ShoppingListModel.Products.Add(new());
     }    
 
     private async Task AddOrUpdateShoppingList()

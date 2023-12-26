@@ -7,5 +7,6 @@ public record UpdateProductCommand(
     int ProductId,
     string Name,
     string Description,
-    int Amount,
-    bool IsCompleted) : IRequest;
+    decimal Amount,
+    bool IsCompleted,
+    Models.Unit Unit) : IRequest;
