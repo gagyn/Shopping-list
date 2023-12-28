@@ -7,4 +7,5 @@ public interface IUserAccessor
     ClaimsPrincipal User { get; }
     string UserName { get; }
     Guid Id { get; }
+    bool IsAdministrator();
 }

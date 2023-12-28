@@ -20,4 +20,3 @@ public class UpdateProductCommandHandler(
         await productRepository.SaveChanges(cancellationToken);
     }
 }
-

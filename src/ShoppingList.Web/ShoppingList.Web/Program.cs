@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.Domain.Repositories;
+using ShoppingList.Domain.User;
 using ShoppingList.Infrastructure.Authentication;
 using ShoppingList.Infrastructure.Database;
 using ShoppingList.Infrastructure.QueryHandlers;
@@ -24,11 +25,10 @@ builder.Services.AddCascadingAuthenticationState()
     .AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+}).AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -47,7 +47,8 @@ builder.Services
     })
     .AddEntityFrameworkStores<ShoppingListContext>()
     .AddSignInManager()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddRoles<IdentityRole>();
 
 AddRepositories(builder.Services);
 AddServices(builder.Services);
@@ -78,13 +79,7 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider
-        .GetRequiredService<ShoppingListContext>();
-
-    dbContext.Database.Migrate();
-}
+await InitializeDatabase(app.Services);
 
 app.Run();
 
@@ -102,4 +97,19 @@ void AddServices(IServiceCollection services)
     services
         .AddSingleton<IEmailSender<ApplicationUserEntity>, IdentityNoOpEmailSender>()
         .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<FindShoppingListQueryHandler>());
+}
+
+async Task InitializeDatabase(IServiceProvider serviceProvider)
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ShoppingListContext>();
+
+    dbContext.Database.Migrate();
+
+    if (await dbContext.Roles.AnyAsync())
+    {
+        return;
+    }
+    dbContext.Roles.Add(new IdentityRole(UserRoleEntity.BasicUser.ToString()));
+    dbContext.Roles.Add(new IdentityRole(UserRoleEntity.Administrator.ToString()));
 }

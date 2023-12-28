@@ -3,4 +3,4 @@ using ShoppingList.DTO.Models;
 
 namespace ShoppingList.DTO.Queries;
 
-public record FindShoppingListQuery(int Id) : IRequest<ShoppingListDetails>;
+public record FindRecipeQuery(int Id) : IRequest<RecipeDetails>;

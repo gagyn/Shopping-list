@@ -5,8 +5,8 @@ namespace ShoppingList.Domain.ShoppingList;
 public class ShoppingListEntity : BaseEntity
 {
     public int Id { get; private set; }
-    public string Name { get; private set; }
-    public ICollection<ProductEntity> Products { get; private set; }
+    public string Name { get; private set; } = string.Empty;
+    public ICollection<ProductEntity> Products { get; private set; } = [];
     public Guid OwnedByUserId { get; private set; }
 
     private ShoppingListEntity()

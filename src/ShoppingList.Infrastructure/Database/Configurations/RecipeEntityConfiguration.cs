@@ -9,6 +9,8 @@ public class RecipeEntityConfiguration : BaseEntityConfiguration<RecipeEntity>
     {
         base.Configure(builder);
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.Name).IsRequired();
+        builder.Property(x => x.Description).IsRequired();
         builder.OwnsMany(x => x.Ingredients, b =>
         {
             b.ToTable(GetTableName<IngredientEntity>());

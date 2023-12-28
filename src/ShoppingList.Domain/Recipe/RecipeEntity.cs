@@ -5,22 +5,27 @@ namespace ShoppingList.Domain.Recipe;
 public class RecipeEntity : BaseEntity
 {
     public int Id { get; private set; }
-    public string Name { get; private set; }
-    public string Description { get; private set; }
-    public ICollection<IngredientEntity> Ingredients { get; private set; }
+    public string Name { get; private set; } = string.Empty;
+    public string Description { get; private set; } = string.Empty;
+    public ICollection<IngredientEntity> Ingredients { get; private set; } = [];
 
     private RecipeEntity()
     {
     }
 
-    private RecipeEntity(int id, string name, string description, string createdBy) : base(createdBy)
+    private RecipeEntity(string name, string createdBy) : base(createdBy)
     {
-        Id = id;
         Name = name;
-        Description = description;
     }
 
-    public static RecipeEntity Create(int id, string name, string description, string createdBy) => new(id, name, description, createdBy);
+    public static RecipeEntity Create(string name, string createdBy) => new(name, createdBy);
+
+    public void Update(string name, string description, string modifiedBy)
+    {
+        Name = name;
+        Description = description;
+        SetModified(modifiedBy);
+    }
 
     public void AddIngredient(IngredientEntity ingredientEntity, string modifiedBy)
     {

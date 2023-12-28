@@ -9,6 +9,7 @@ public class ShoppingListEntityConfiguration : BaseEntityConfiguration<ShoppingL
     {
         base.Configure(builder);
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.Name).IsRequired();
         builder.OwnsMany(x => x.Products, b =>
         {
             b.ToTable(GetTableName<ProductEntity>());
