@@ -30,7 +30,8 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services
     .AddDbContext<ShoppingListContext>(options => options.UseSqlServer(connectionString))
     .AddDatabaseDeveloperPageExceptionFilter();
@@ -48,11 +49,8 @@ builder.Services
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services
-    .AddSingleton<IEmailSender<ApplicationUserEntity>, IdentityNoOpEmailSender>()
-    .AddScoped<IShoppingListRepository, ShoppingListRepository>()
-    .AddScoped<IProductRepository, ProductRepository>()
-    .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<FindShoppingListQueryHandler>());
+AddRepositories(builder.Services);
+AddServices(builder.Services);
 
 var app = builder.Build();
 
@@ -89,3 +87,19 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+void AddRepositories(IServiceCollection services)
+{
+    services
+        .AddScoped<IShoppingListRepository, ShoppingListRepository>()
+        .AddScoped<IProductRepository, ProductRepository>()
+        .AddScoped<IRecipeRepository, RecipeRepository>()
+        .AddScoped<IIngredientRepository, IngredientRepository>();
+}
+
+void AddServices(IServiceCollection services)
+{
+    services
+        .AddSingleton<IEmailSender<ApplicationUserEntity>, IdentityNoOpEmailSender>()
+        .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<FindShoppingListQueryHandler>());
+}

@@ -33,13 +33,15 @@ public class ShoppingListEntity : BaseEntity
     public void UpdateName(string name, string modifiedBy)
     {
         Name = name;
-        this.SetModified(modifiedBy);
+        SetModified(modifiedBy);
     }
 
-    public void RemoveProduct(int productId)
+    public void RemoveProduct(int productId, string modifiedBy)
     {
         var product = Products.FirstOrDefault(x => x.Id == productId)
             ?? throw new EntityNotFoundException<ProductEntity>();
+
         Products.Remove(product);
+        SetModified(modifiedBy);
     }
 }

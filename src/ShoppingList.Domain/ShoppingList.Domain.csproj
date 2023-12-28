@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Recipe\" />
     <Folder Include="User\" />
   </ItemGroup>
 

@@ -5,12 +5,15 @@ using ShoppingList.Infrastructure.Authentication;
 
 namespace ShoppingList.Infrastructure.CommandHandlers;
 public class RemoveProductCommandHandler(
-    IProductRepository productRepository,
+    IShoppingListRepository shoppingListRepository,
     IUserAccessor userAccessor) : IRequestHandler<RemoveProductCommand>
 {
     public async Task Handle(RemoveProductCommand request, CancellationToken cancellationToken)
     {
-        await productRepository.Remove(request.ShoppingListId, request.ProductId, userAccessor.Id);
-        await productRepository.SaveChanges(cancellationToken);
+        var shoppingList = await shoppingListRepository.FindOrThrow(request.ShoppingListId, userAccessor.Id, cancellationToken);
+
+        shoppingList.RemoveProduct(request.ProductId, userAccessor.UserName);
+
+        await shoppingListRepository.SaveChanges(cancellationToken);
     }
 }

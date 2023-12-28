@@ -14,7 +14,7 @@ public class ShoppingListRepository(ShoppingListContext dbContext) : RepositoryB
 
     public async Task<ShoppingListEntity> FindOrThrow(int id, Guid userId, CancellationToken cancellationToken)
     {
-        var shoppingList = await dbContext.ShoppingLists.FirstOrDefaultAsync(x => x.Id == id && x.OwnedByUserId == userId);
+        var shoppingList = await dbContext.ShoppingLists.FirstOrDefaultAsync(x => x.Id == id && x.OwnedByUserId == userId, cancellationToken);
         return shoppingList ?? throw new EntityNotFoundException<ShoppingListEntity>();
     }
 
