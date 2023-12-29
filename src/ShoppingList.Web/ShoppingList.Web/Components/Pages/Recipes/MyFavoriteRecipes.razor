@@ -1,5 +1,26 @@
-﻿<h3>MyFavoriteIdeas</h3>
+﻿@inject NavigationManager Nav
+@inject IMediator mediator
+
+@page "/my-favorite-recipes"
+
+<PageTitle>Ulubione przepisy</PageTitle>
+
+<h4>Moje ulubione przepisy:</h4>
+
+@foreach (var recipe in recipes)
+{
+    var link = $"recipe/{recipe.Id}";
+    <p>
+        <NavLink href="@link">@recipe.Name</NavLink>
+            @recipe.ShortDescription
+    </p>
+}
 
 @code {
+    private IReadOnlyCollection<RecipeShort> recipes = [];
 
+    protected override async Task OnInitializedAsync()
+    {
+        recipes = await mediator.Send(new GetFavoriteRecipesQuery());
+    }
 }

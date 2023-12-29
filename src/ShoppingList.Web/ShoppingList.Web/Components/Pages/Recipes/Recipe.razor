@@ -2,10 +2,12 @@
 @inject IMediator mediator
 
 @page "/recipe/{RecipeId:int}"
+@rendermode InteractiveServer
 
 <PageTitle>@recipeDetails.Name</PageTitle>
 
 <h4>@recipeDetails.Name</h4>
+<CreateShoppingListFromRecipeButton RecipeId="RecipeId" />
 
 <p>@recipeDetails.Description</p>
 

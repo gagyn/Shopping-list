@@ -1,0 +1,31 @@
+﻿@inject NavigationManager nav
+@inject IMediator mediator
+
+@rendermode InteractiveServer
+
+<button type="button" class="btn btn-primary" @onclick="TogglePanel">+ Utwórz listę zakupów</button>
+
+@if (showPanel)
+{
+    <div class="panel">
+        <InputText @bind-Value="name" placeholder="Wprowadź nazwę nowej listy" />
+        <button type="button" class="btn btn-primary" @onclick="CreateShoppingList">Utwórz</button>
+    </div>
+}
+@code {
+    [Parameter] public int RecipeId { get; set; }
+    private bool showPanel;
+    private string name = string.Empty;
+
+    private void TogglePanel()
+    {
+        showPanel = !showPanel;
+        name = string.Empty;
+    }
+
+    private async Task CreateShoppingList()
+    {
+        var shoppingListId = await mediator.Send(new CreateShoppingListFromRecipeCommand(RecipeId, name));
+        nav.NavigateTo($"shopping-list/{shoppingListId}");
+    }
+}

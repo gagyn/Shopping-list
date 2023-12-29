@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.Domain.Recipe;
 using ShoppingList.Domain.ShoppingList;
 using ShoppingList.Infrastructure.Authentication;
 
 namespace ShoppingList.Infrastructure.Database;
-public class ShoppingListContext(DbContextOptions options) : IdentityDbContext<ApplicationUserEntity>(options)
+public class ShoppingListContext(DbContextOptions options) : IdentityDbContext<ApplicationUserEntity, IdentityRole<Guid>, Guid>(options)
 {
     public const string SchemaName = "shoppingList";
     public DbSet<ShoppingListEntity> ShoppingLists { get; set; }

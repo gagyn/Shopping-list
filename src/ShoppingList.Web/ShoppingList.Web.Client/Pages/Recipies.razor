@@ -1,0 +1,38 @@
+﻿@using ShoppingList.DTO.Models
+@using ShoppingList.Web.Client.Services
+@inject NavigationManager nav
+@inject IRecipesClient recipesClient
+
+@page "/"
+
+@rendermode InteractiveAuto
+
+<PageTitle>Inspiracje - przepisy</PageTitle>
+
+<h4>Inspiracje - przepisy</h4>
+
+<p>Jeśli spodoba Ci się jakiś przepis, możesz go zaimportować do swojego konta jako listę zakupów.</p>
+
+<div class="searchBox">
+    <input @bind-value="SearchText" @bind-value:event="oninput" placeholder="Szukaj po nazwie" />
+</div>
+
+@foreach (var recipe in filteredRecipes)
+{
+    var link = $"recipe/{recipe.Id}";
+    <p>
+        <NavLink href="@link">@recipe.Name</NavLink>
+        @recipe.ShortDescription
+    </p>
+}
+
+@code {
+    private string SearchText { get; set; } = string.Empty;
+    private IReadOnlyCollection<RecipeShort> recipes = [];
+    private IEnumerable<RecipeShort> filteredRecipes => recipes.Where(x => x.Name.ToLower().Contains(SearchText.ToLower()));
+
+    protected override async Task OnInitializedAsync()
+    {
+        recipes = await recipesClient.GetRecipes();
+    }
+}

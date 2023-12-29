@@ -13,4 +13,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\ShoppingList.DTO\ShoppingList.DTO.csproj" />
+    <ProjectReference Include="..\..\ShoppingList.Web.Shared\ShoppingList.Web.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -9,14 +9,18 @@ using ShoppingList.Infrastructure.QueryHandlers;
 using ShoppingList.Infrastructure.Repositories;
 using ShoppingList.Web.Authorization;
 using ShoppingList.Web.Client.Pages;
+using ShoppingList.Web.Client.Services;
 using ShoppingList.Web.Components;
 using ShoppingList.Web.Components.Account;
+using ShoppingList.Web.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddControllers();
 
 builder.Services.AddCascadingAuthenticationState()
     .AddScoped<IdentityUserAccessor>()
@@ -48,7 +52,7 @@ builder.Services
         options.Password.RequireLowercase = false;
         options.Password.RequireUppercase = false;
     })
-    .AddRoles<IdentityRole>()
+    .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ShoppingListContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -71,13 +75,14 @@ else
 
 app.UseHttpsRedirection();
 
+app.MapControllers();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Counter).Assembly);
+    .AddAdditionalAssemblies(typeof(Auth).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
@@ -99,7 +104,8 @@ void AddServices(IServiceCollection services)
 {
     services
         .AddSingleton<IEmailSender<ApplicationUserEntity>, IdentityNoOpEmailSender>()
-        .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<FindShoppingListQueryHandler>());
+        .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<FindShoppingListQueryHandler>())
+        .AddScoped<IRecipesClient, RecipesService>();
 }
 
 async Task InitializeDatabase(IServiceProvider serviceProvider)
@@ -109,7 +115,7 @@ async Task InitializeDatabase(IServiceProvider serviceProvider)
 
     dbContext.Database.Migrate();
 
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
     var roles = new[] { UserRoleEntity.BasicUser, UserRoleEntity.Administrator };
 
     if (await dbContext.Roles.AnyAsync())
@@ -121,14 +127,14 @@ async Task InitializeDatabase(IServiceProvider serviceProvider)
     {
         if (!await roleManager.RoleExistsAsync(role.ToString()))
         {
-            await roleManager.CreateAsync(new IdentityRole(role.ToString()));
+            await roleManager.CreateAsync(new IdentityRole<Guid>(role.ToString()));
         }
     }
 
     if (await dbContext.Users.AnyAsync())
     {
         var basicUserRole = await dbContext.Roles.FirstAsync(x => x.Name == UserRoleEntity.BasicUser.ToString());
-        await dbContext.Users.ForEachAsync(x => dbContext.UserRoles.Add(new IdentityUserRole<string>
+        await dbContext.Users.ForEachAsync(x => dbContext.UserRoles.Add(new IdentityUserRole<Guid>
         {
             UserId = x.Id,
             RoleId = basicUserRole.Id
