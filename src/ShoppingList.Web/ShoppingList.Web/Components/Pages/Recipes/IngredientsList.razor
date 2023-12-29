@@ -1,0 +1,33 @@
+﻿@rendermode InteractiveServer
+
+<h4>Składniki:</h4>
+
+<div class="ingredients">
+    @foreach (var ingredient in Ingredients)
+    {
+        <Ingredient
+            @key="ingredient.Id"
+            RecipeId="RecipeId"
+            IngredientModel="ingredient"
+            OnIngredientRemoved="OnIngredientRemoved"
+            OnIngredientCreated="OnIngredientCreation"
+        />
+    }
+</div>
+
+@code {
+    [Parameter] public int RecipeId {get; set;}
+    [Parameter] public ICollection<IngredientDetails> Ingredients { get; set; } = [];
+
+    private void OnIngredientRemoved(IngredientDetails ingredient)
+    {
+        Ingredients.Remove(ingredient);
+        StateHasChanged();
+    }
+
+    private void OnIngredientCreation(IngredientDetails ingredient)
+    {
+        Ingredients.Add(new());
+        StateHasChanged();
+    }
+}

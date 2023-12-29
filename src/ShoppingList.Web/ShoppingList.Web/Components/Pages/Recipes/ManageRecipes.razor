@@ -1,0 +1,34 @@
+﻿@inject NavigationManager nav
+@inject IMediator mediator
+
+@attribute [StreamRendering]
+@attribute [Authorize(Policies.Administrator)]
+@page "/manage-recipes"
+
+<PageTitle>Zarządzanie przepisami</PageTitle>
+
+<h4>Lista publicznych przepisów:</h4>
+
+@if (recipes is not null)
+{
+    foreach (var recipe in recipes)
+    {
+        var link = $"manage-recipe/{recipe.Id}";
+        <p>
+            <NavLink href="@link">@recipe.Name</NavLink>
+            @recipe.ShortDescription
+        </p>
+    }
+    <p>
+        <NavLink href="manage-recipe">Dodaj nowy przepis...</NavLink>
+    </p>
+}
+
+@code {
+    IReadOnlyCollection<RecipeShort>? recipes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        recipes = await mediator.Send(new GetRecipesQuery());
+    }
+}

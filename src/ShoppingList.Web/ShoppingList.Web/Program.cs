@@ -7,6 +7,7 @@ using ShoppingList.Infrastructure.Authentication;
 using ShoppingList.Infrastructure.Database;
 using ShoppingList.Infrastructure.QueryHandlers;
 using ShoppingList.Infrastructure.Repositories;
+using ShoppingList.Web.Authorization;
 using ShoppingList.Web.Client.Pages;
 using ShoppingList.Web.Components;
 using ShoppingList.Web.Components.Account;
@@ -30,6 +31,8 @@ builder.Services.AddAuthentication(options =>
     options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
 }).AddIdentityCookies();
 
+builder.Services.AddAuthorization(options => options.AddPolicies());
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services
@@ -45,10 +48,10 @@ builder.Services
         options.Password.RequireLowercase = false;
         options.Password.RequireUppercase = false;
     })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ShoppingListContext>()
     .AddSignInManager()
-    .AddDefaultTokenProviders()
-    .AddRoles<IdentityRole>();
+    .AddDefaultTokenProviders();
 
 AddRepositories(builder.Services);
 AddServices(builder.Services);
@@ -106,10 +109,30 @@ async Task InitializeDatabase(IServiceProvider serviceProvider)
 
     dbContext.Database.Migrate();
 
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roles = new[] { UserRoleEntity.BasicUser, UserRoleEntity.Administrator };
+
     if (await dbContext.Roles.AnyAsync())
     {
         return;
     }
-    dbContext.Roles.Add(new IdentityRole(UserRoleEntity.BasicUser.ToString()));
-    dbContext.Roles.Add(new IdentityRole(UserRoleEntity.Administrator.ToString()));
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role.ToString()))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role.ToString()));
+        }
+    }
+
+    if (await dbContext.Users.AnyAsync())
+    {
+        var basicUserRole = await dbContext.Roles.FirstAsync(x => x.Name == UserRoleEntity.BasicUser.ToString());
+        await dbContext.Users.ForEachAsync(x => dbContext.UserRoles.Add(new IdentityUserRole<string>
+        {
+            UserId = x.Id,
+            RoleId = basicUserRole.Id
+        }));
+    }
+    await dbContext.SaveChangesAsync();
 }

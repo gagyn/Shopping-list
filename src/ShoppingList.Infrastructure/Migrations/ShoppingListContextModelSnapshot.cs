@@ -341,7 +341,7 @@ namespace ShoppingList.Infrastructure.Migrations
 
             modelBuilder.Entity("ShoppingList.Domain.Recipe.RecipeEntity", b =>
                 {
-                    b.OwnsMany("ShoppingList.Domain.Recipe.IngredientEntity", "Ingredients", b1 =>
+                    b.OwnsMany("ShoppingList.Domain.Recipe.RecipeEntity.Ingredients#ShoppingList.Domain.Recipe.IngredientEntity", "Ingredients", b1 =>
                         {
                             b1.Property<int>("RecipeId")
                                 .HasColumnType("int");
@@ -381,7 +381,7 @@ namespace ShoppingList.Infrastructure.Migrations
 
             modelBuilder.Entity("ShoppingList.Domain.ShoppingList.ShoppingListEntity", b =>
                 {
-                    b.OwnsMany("ShoppingList.Domain.ShoppingList.ProductEntity", "Products", b1 =>
+                    b.OwnsMany("ShoppingList.Domain.ShoppingList.ShoppingListEntity.Products#ShoppingList.Domain.ShoppingList.ProductEntity", "Products", b1 =>
                         {
                             b1.Property<int>("ShoppingListId")
                                 .HasColumnType("int");

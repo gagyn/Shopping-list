@@ -1,0 +1,29 @@
+﻿@inject NavigationManager nav
+@inject IMediator mediator
+
+@page "/recipe/{RecipeId:int}"
+
+<PageTitle>@recipeDetails.Name</PageTitle>
+
+<h4>@recipeDetails.Name</h4>
+
+<p>@recipeDetails.Description</p>
+
+@foreach (var ingredient in recipeDetails.Ingredients)
+{
+    <div class="ingredient">
+        <p>@ingredient.Name</p>
+        @ingredient.Description
+        @($"{ingredient.Amount} {ingredient.Unit}")
+    </div>
+}
+
+@code {
+    [Parameter] public int RecipeId { get; set; }
+    private RecipeDetails recipeDetails = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        recipeDetails = await mediator.Send(new FindRecipeQuery(RecipeId));
+    }
+}

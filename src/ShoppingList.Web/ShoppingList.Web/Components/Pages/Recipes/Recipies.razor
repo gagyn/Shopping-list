@@ -1,0 +1,39 @@
+﻿@inject NavigationManager Nav
+@inject IMediator mediator
+
+@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Inspiracje - przepisy</PageTitle>
+
+<h4>Inspiracje - przepisy</h4>
+
+<p>Jeśli spodoba Ci się jakiś przepis, możesz go zaimportować do swojego konta jako listę zakupów.</p>
+
+<div class="searchBox">
+    <input @bind-value="searchText" @bind-value:event="oninput" @onchange="Search" placeholder="Search by title" />
+</div>
+
+@foreach (var recipe in recipes)
+{
+    var link = $"recipe/{recipe.Id}";
+    <p>
+        <NavLink href="@link">@recipe.Name</NavLink>
+        @recipe.ShortDescription
+    </p>
+}
+
+@code {
+    private string? searchText;
+    private IReadOnlyCollection<RecipeShort> recipes = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        recipes = await mediator.Send(new GetRecipesQuery());
+    }
+
+    private async Task Search()
+    {
+        recipes = await mediator.Send(new GetRecipesQuery(Name: searchText));
+    }
+}

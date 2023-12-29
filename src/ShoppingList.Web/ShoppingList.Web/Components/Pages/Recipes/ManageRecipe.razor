@@ -1,0 +1,63 @@
+﻿@inherits MessageComponentBase
+@inject NavigationManager nav
+@inject IMediator mediator
+
+@page "/manage-recipe"
+@page "/manage-recipe/{RecipeId:int}"
+
+<EditForm Model="@RecipeModel" OnSubmit="AddOrUpdateRecipe" FormName="@($"RecipeForm{RecipeModel.Id}")">
+    <InputText @bind-Value="RecipeModel.Name" placeholder="Podaj nazwę przepisu" />
+    @if (RecipeId is not null)
+    {
+        <InputTextArea @bind-Value="RecipeModel.Description" placeholder="Podaj szczegóły przepisu" />
+    }
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    @if (RecipeId is not null)
+    {
+        <button type="button" class="btn btn-danger" @onclick="RemoveRecipe">Usuń przepis</button>
+    }
+</EditForm>
+<div class="message">@message</div>
+
+@if (RecipeAlreadyExists)
+{
+    <IngredientsList RecipeId="RecipeId!.Value" Ingredients="RecipeModel.Ingredients" />
+}
+
+@code {
+    [Parameter] public int? RecipeId { get; set; }
+    [SupplyParameterFromForm] private RecipeDetails RecipeModel { get; set; } = new();
+
+    private bool RecipeAlreadyExists => RecipeId.HasValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (RecipeAlreadyExists)
+        {
+            RecipeModel = await mediator.Send(new FindRecipeQuery(RecipeId!.Value));
+        }
+        RecipeModel.Ingredients.Add(new());
+    }
+
+    private async Task AddOrUpdateRecipe()
+    {
+        if (RecipeAlreadyExists)
+        {
+            await mediator.Send(new UpdateRecipeCommand(RecipeId!.Value, RecipeModel.Name!, RecipeModel.Description!));
+            _ = ShowMessage("Zmieniono przepis.");
+        }
+        else
+        {
+            RecipeId = await mediator.Send(new CreateRecipeCommand(RecipeModel.Name!));
+            _ = ShowMessage("Stworzono nowy przepis.");
+            nav.NavigateTo($"manage-recipe/{RecipeId.Value}");
+        }
+    }
+
+    private async Task RemoveRecipe()
+    {
+        await mediator.Send(new RemoveRecipeCommand(RecipeId!.Value));
+        await ShowMessage("Usunięto przepis.");
+        nav.NavigateTo("../manage-recipes");
+    }
+}

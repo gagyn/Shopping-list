@@ -11,7 +11,10 @@ public class GetRecipesQueryHandler(
 {
     public async Task<IReadOnlyCollection<RecipeShort>> Handle(GetRecipesQuery request, CancellationToken cancellationToken)
         => await dbContext.Recipes
-            .Where(x => string.IsNullOrEmpty(request.Name) || x.Name.StartsWith(request.Name))
-            .Select(x => new RecipeShort(x.Id, x.Name, x.Description.Take(50).ToString()!))
+            .Where(x => string.IsNullOrEmpty(request.Name) || x.Name.ToLower().Contains(request.Name.ToLower()))
+            .Select(x => new RecipeShort(
+                x.Id,
+                x.Name,
+                x.Description.Length > 50 ? x.Description.Substring(0, 50).Trim() + "..." : x.Description))
             .ToListAsync(cancellationToken);
 }

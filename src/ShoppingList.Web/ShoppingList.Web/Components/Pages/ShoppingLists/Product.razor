@@ -1,7 +1,6 @@
-﻿@using ShoppingList.Infrastructure.Extensions
+﻿@inherits MessageComponentBase
 @inject NavigationManager Nav
 @inject IMediator mediator
-@rendermode InteractiveServer
 
 <EditForm Model="@ProductModel" OnSubmit="AddOrUpdateProduct" FormName="@($"ProductForm{ProductModel.Id}")">
     <InputText @bind-Value="ProductModel.Name" placeholder="Podaj nazwę produktu" />
@@ -12,7 +11,7 @@
             <option value="@name">@description</option>
         }
     </InputSelect>
-    <InputText @bind-Value="ProductModel.Description" placeholder="Wprowadź opis" />
+    <InputText @bind-Value="ProductModel.Description" placeholder="Wprowadź opcjonalny opis" />
     @if (ProductModel.Id.HasValue)
     {
         <InputCheckbox @bind-Value="ProductModel.Completed" DisplayName="Czy zakupiono" />
@@ -31,8 +30,6 @@
     [Parameter] public Action<ProductDetails> OnProductRemoval { get; set; } = _ => { };
     [Parameter] public Action<ProductDetails> OnProductCreated { get; set; } = _ => { };
 
-    string? message;
-
     private async Task AddOrUpdateProduct()
     {
         var productAlreadyExists = ProductModel.Id.HasValue;
@@ -42,25 +39,25 @@
                 ShoppingListId!.Value,
                 ProductModel.Id!.Value,
                 ProductModel.Name!,
-                ProductModel.Description!,
+                ProductModel.Description ?? string.Empty,
                 ProductModel.Amount!.Value,
                 ProductModel.Completed,
                 ProductModel.Unit);
 
             await mediator.Send(command);
-            ShowMessage("Zmieniono produkt.");
+            _ = ShowMessage("Zmieniono produkt.");
         }
         else
         {
             var command = new AddProductToShoppingListCommand(
                 ShoppingListId!.Value,
                 ProductModel.Name!, 
-                ProductModel.Description!,
+                ProductModel.Description ?? string.Empty,
                 ProductModel.Amount!.Value,
                 ProductModel.Unit);
 
             ProductModel.Id = await mediator.Send(command);
-            ShowMessage("Dodano produkt.");
+            _ = ShowMessage("Dodano produkt.");
             OnProductCreated(ProductModel);
         }
     }
@@ -70,15 +67,7 @@
         var command = new RemoveProductCommand(ShoppingListId!.Value, ProductModel.Id!.Value);
         await mediator.Send(command);
 
+        _ = ShowMessage("Usunięto produkt.");
         OnProductRemoval(ProductModel);
-        ShowMessage("Usunięto produkt.");
-    }
-
-    private async void ShowMessage(string message)
-    {
-        this.message = message;
-        await Task.Delay(2000);
-        this.message = null;
-        this.StateHasChanged();
     }
 }

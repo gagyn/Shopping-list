@@ -1,6 +1,7 @@
 ﻿@implements IDisposable
 
-@inject NavigationManager NavigationManager
+@inject NavigationManager nav
+@inject IUserAccessor userAccessor
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -14,7 +15,7 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-lightbulb" aria-hidden="true"></span> Inspiracje - przepisy
+                <span class="bi bi-lightbulb" aria-hidden="true"></span>Inspiracje - przepisy
             </NavLink>
         </div>
 
@@ -31,37 +32,43 @@
                     </NavLink>
                 </div>
             </NotAuthorized>
+
             <Authorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-circle" aria-hidden="true"></span> Moje konto
+                    <NavLink class="nav-link" href="my-shopping-lists">
+                        <span class="bi bi-list-check" aria-hidden="true"></span>Moje listy zakupów
                     </NavLink>
                 </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="my-favorite-recipes">
+                        <span class="bi bi-star-fill" aria-hidden="true"></span>Moje ulubione przepisy
+                    </NavLink>
+                </div>
+
+                @if (userAccessor.IsAdministrator())
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="manage-recipes">
+                            <span class="bi bi-gear" aria-hidden="true"></span>Zarządzanie przepisami
+                        </NavLink>
+                    </div>
+                }
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Manage">
+                        <span class="bi bi-person-circle" aria-hidden="true"></span>Moje konto
+                    </NavLink>
+                </div>
+
                 <div class="nav-item px-3">
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
                         <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span>Logout
                         </button>
                     </form>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="my-shopping-lists">
-                        <span class="bi bi-list-check" aria-hidden="true"></span> Moje listy zakupów
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="weather">
-                        <span class="bi bi-star-fill" aria-hidden="true"></span> Moje ulubione przepisy
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="auth">
-                        <span class="bi bi-gear" aria-hidden="true"></span> Zarządzanie przepisami
-                    </NavLink>
                 </div>
             </Authorized>
         </AuthorizeView>
@@ -73,19 +80,19 @@
 
     protected override void OnInitialized()
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
+        currentUrl = nav.ToBaseRelativePath(nav.Uri);
+        nav.LocationChanged += OnLocationChanged;
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        currentUrl = nav.ToBaseRelativePath(e.Location);
         StateHasChanged();
     }
 
     public void Dispose()
     {
-        NavigationManager.LocationChanged -= OnLocationChanged;
+        nav.LocationChanged -= OnLocationChanged;
     }
 }
 

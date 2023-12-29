@@ -1,0 +1,14 @@
+﻿@rendermode InteractiveServer
+
+@code {
+    protected string? message;
+
+    protected async Task ShowMessage(string message)
+    {
+        this.message = message;
+        this.StateHasChanged();
+        await Task.Delay(2000);
+        this.message = null;
+        this.StateHasChanged();
+    }
+}

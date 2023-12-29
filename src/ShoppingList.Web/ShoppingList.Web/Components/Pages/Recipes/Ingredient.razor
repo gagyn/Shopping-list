@@ -1,0 +1,68 @@
+﻿@inherits MessageComponentBase
+@inject NavigationManager Nav
+@inject IMediator mediator
+
+<EditForm Model="@IngredientModel" OnSubmit="AddOrUpdateIngredient" FormName="@($"IngredientForm{IngredientModel.Id}")">
+    <InputText @bind-Value="IngredientModel.Name" placeholder="Podaj nazwę składnika" />
+    <InputNumber @bind-Value="IngredientModel.Amount" placeholder="Podaj ilość tego składnika" />
+    <InputSelect @bind-Value="IngredientModel.Unit" placeholder="Wybierz jednostkę">
+        @foreach (var (name, description) in EnumExtensions.GetDescriptions<DTO.Models.Unit>())
+        {
+            <option value="@name">@description</option>
+        }
+    </InputSelect>
+    <InputText @bind-Value="IngredientModel.Description" placeholder="Wprowadź opcjonalny opis" />
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    @if (IngredientAlreadyExists)
+    {
+        <button type="button" class="btn btn-danger" @onclick="RemoveIngredient">Usuń</button>
+    }
+</EditForm>
+<div class="message">@message</div>
+
+@code {
+    [Parameter] public int RecipeId { get; set; }
+    [Parameter] public IngredientDetails IngredientModel { get; set; } = new();
+    [Parameter] public Action<IngredientDetails> OnIngredientRemoved { get; set; } = _ => { };
+    [Parameter] public Action<IngredientDetails> OnIngredientCreated { get; set; } = _ => { };
+
+    private bool IngredientAlreadyExists => IngredientModel.Id.HasValue;
+
+    private async Task AddOrUpdateIngredient()
+    {
+        if (IngredientAlreadyExists)
+        {
+            var command = new UpdateIngredientCommand(
+                RecipeId,
+                IngredientModel.Id!.Value,
+                IngredientModel.Name!,
+                IngredientModel.Description ?? string.Empty,
+                IngredientModel.Amount!.Value,
+                IngredientModel.Unit);
+            await mediator.Send(command);
+            _ = ShowMessage("Zmieniono składnik.");
+        }
+        else
+        {
+            var command = new AddIngredientToRecipeCommand(
+                RecipeId,
+                IngredientModel.Name!,
+                IngredientModel.Description ?? string.Empty,
+                IngredientModel.Amount!.Value,
+                IngredientModel.Unit);
+            IngredientModel.Id = await mediator.Send(command);
+
+            _ = ShowMessage("Dodano składnik.");
+            OnIngredientCreated(IngredientModel);
+        }
+    }
+
+    private async Task RemoveIngredient()
+    {
+        var command = new RemoveIngredientCommand(RecipeId, IngredientModel.Id!.Value);
+        await mediator.Send(command);
+
+        OnIngredientRemoved(IngredientModel);
+        await ShowMessage("Usunięto składnik.");
+    }
+}

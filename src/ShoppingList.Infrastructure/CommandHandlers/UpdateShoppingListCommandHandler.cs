@@ -1,22 +1,20 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+using ShoppingList.Domain.Repositories;
 using ShoppingList.DTO.Commands;
 using ShoppingList.Infrastructure.Authentication;
-using ShoppingList.Infrastructure.Database;
 
 namespace ShoppingList.Infrastructure.CommandHandlers;
 
 public class UpdateShoppingListCommandHandler(
-    ShoppingListContext dbContext,
+    IShoppingListRepository shoppingListRepository,
     IUserAccessor userAccessor) : IRequestHandler<UpdateShoppingListCommand>
 {
     public async Task Handle(UpdateShoppingListCommand request, CancellationToken cancellationToken)
     {
-        var shoppingList = await dbContext.ShoppingLists.FirstOrDefaultAsync(x => x.Id == request.Id && x.OwnedByUserId == userAccessor.Id)
-            ?? throw new Exception("Shopping list not found.");
+        var shoppingList = await shoppingListRepository.FindOrThrow(request.Id, userAccessor.Id, cancellationToken);
 
         shoppingList.UpdateName(request.Name, userAccessor.UserName);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await shoppingListRepository.SaveChanges(cancellationToken);
     }
 }
