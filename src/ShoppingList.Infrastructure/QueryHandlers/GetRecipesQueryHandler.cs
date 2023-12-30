@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ShoppingList.DTO.Models;
 using ShoppingList.DTO.Queries;
 using ShoppingList.Infrastructure.Database;
+using ShoppingList.Infrastructure.Extensions;
 
 namespace ShoppingList.Infrastructure.QueryHandlers;
 
@@ -11,10 +12,10 @@ public class GetRecipesQueryHandler(
 {
     public async Task<IReadOnlyCollection<RecipeShort>> Handle(GetRecipesQuery request, CancellationToken cancellationToken)
         => await dbContext.Recipes
-            .Where(x => string.IsNullOrEmpty(request.Name) || x.Name.ToLower().Contains(request.Name.ToLower()))
+            .Where(x => string.IsNullOrEmpty(request.Name) || x.Name.Contains(request.Name, StringComparison.CurrentCultureIgnoreCase))
             .Select(x => new RecipeShort(
                 x.Id,
                 x.Name,
-                x.Description.Length > 50 ? x.Description.Substring(0, 50).Trim() + "..." : x.Description))
+                x.Description.ShorterDescription()))
             .ToListAsync(cancellationToken);
 }

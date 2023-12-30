@@ -97,7 +97,8 @@ void AddRepositories(IServiceCollection services)
         .AddScoped<IShoppingListRepository, ShoppingListRepository>()
         .AddScoped<IProductRepository, ProductRepository>()
         .AddScoped<IRecipeRepository, RecipeRepository>()
-        .AddScoped<IIngredientRepository, IngredientRepository>();
+        .AddScoped<IIngredientRepository, IngredientRepository>()
+        .AddScoped<IUserRepository, UserRepository>();
 }
 
 void AddServices(IServiceCollection services)

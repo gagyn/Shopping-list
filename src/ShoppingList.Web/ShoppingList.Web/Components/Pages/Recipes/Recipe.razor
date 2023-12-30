@@ -1,13 +1,18 @@
-﻿@inject NavigationManager nav
+﻿@inherits MessageComponentBase
+@inject NavigationManager nav
 @inject IMediator mediator
 
 @page "/recipe/{RecipeId:int}"
-@rendermode InteractiveServer
 
 <PageTitle>@recipeDetails.Name</PageTitle>
 
 <h4>@recipeDetails.Name</h4>
 <CreateShoppingListFromRecipeButton RecipeId="RecipeId" />
+<MarkRecipeAsFavoriteButton 
+    RecipeId="RecipeId"
+    MarkedAsFavorite="recipeDetails.MarkedAsFavorite"
+    OnMarkedAsFavorite="OnMarkedAsFavorite" />
+<div class="message">@message</div>
 
 <p>@recipeDetails.Description</p>
 
@@ -27,5 +32,16 @@
     protected override async Task OnInitializedAsync()
     {
         recipeDetails = await mediator.Send(new FindRecipeQuery(RecipeId));
+    }
+
+    private void OnMarkedAsFavorite()
+    {
+        var message = recipeDetails.MarkedAsFavorite
+            ? "Usunięto przepis z ulubionych."
+            : "Dodano przepis do ulubionych.";
+
+        recipeDetails.MarkedAsFavorite = !recipeDetails.MarkedAsFavorite;
+
+        _ = ShowMessage(message);
     }
 }

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Infrastructure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.DTO", "ShoppingList.DTO\ShoppingList.DTO.csproj", "{9DFEFFCC-793C-40B9-8E5D-C2F238BC9182}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList.Web.Shared", "ShoppingList.Web.Shared\ShoppingList.Web.Shared.csproj", "{D87A0C6A-C2B4-419D-B2E8-40C004334C85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList.Web.Shared", "ShoppingList.Web.Shared\ShoppingList.Web.Shared.csproj", "{D87A0C6A-C2B4-419D-B2E8-40C004334C85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
