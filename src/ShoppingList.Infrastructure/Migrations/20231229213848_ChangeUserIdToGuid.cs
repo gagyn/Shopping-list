@@ -103,7 +103,7 @@ namespace ShoppingList.Infrastructure.Migrations
             migrationBuilder.AddForeignKey("FK_AspNetUserRoles_AspNetUsers_UserId", "AspNetUserRoles", "UserId", "AspNetUsers", schema: "shoppingList", principalSchema: "shoppingList");
             migrationBuilder.AddForeignKey("FK_AspNetUserLogins_AspNetUsers_UserId", "AspNetUserLogins", "UserId", "AspNetUsers", schema: "shoppingList", principalSchema: "shoppingList");
             migrationBuilder.AddForeignKey("FK_AspNetUserClaims_AspNetUsers_UserId", "AspNetUserClaims", "UserId", "AspNetUsers", schema: "shoppingList", principalSchema: "shoppingList");
-            migrationBuilder.AddForeignKey("FK_AspNetUserRoles_AspNetRoles_RoleId", "AspNetUserRoles", "RoleId", "AspNetRoles", schema: "shoppingList", principalSchema: "shoppingList");
+            migrationBuilder.AddForeignKey("FK_AspNetUserRoles_AspNetRoles_RoleId", "AspNetUserRoles", new[] { "RoleId", "UserId" }, "AspNetRoles", schema: "shoppingList", principalSchema: "shoppingList");
             migrationBuilder.AddForeignKey("FK_AspNetRoleClaims_AspNetRoles_RoleId", "AspNetRoleClaims", "RoleId", "AspNetRoles", schema: "shoppingList", principalSchema: "shoppingList");
 
             migrationBuilder.CreateTable(

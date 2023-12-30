@@ -5,9 +5,10 @@ namespace ShoppingList.Infrastructure.Extensions;
 public static class EnumExtensions
 {
     public static TResult Parse<TResult>(this Enum sourceEnum) where TResult : struct, Enum
-    {
-        return Enum.Parse<TResult>(sourceEnum.ToString());
-    }
+        => Enum.Parse<TResult>(sourceEnum.ToString());
+
+    public static TResult Parse<TResult>(this string enumValue) where TResult : struct, Enum
+        => Enum.Parse<TResult>(enumValue);
 
     public static Dictionary<string, string> GetDescriptions<T>() where T : struct, Enum
     {

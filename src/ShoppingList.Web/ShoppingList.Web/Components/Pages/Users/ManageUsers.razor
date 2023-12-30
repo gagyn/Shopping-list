@@ -1,0 +1,24 @@
+﻿@inject NavigationManager nav
+@inject IMediator mediator
+
+@attribute [StreamRendering]
+@attribute [Authorize(Policies.Administrator)]
+@page "/manage-users"
+
+<PageTitle>Zarządzanie użytkownikami</PageTitle>
+
+<h4>Lista użytkowników:</h4>
+
+@foreach (var user in users)
+{
+    <ManageUser UserModel="user" />
+}
+
+@code {
+    IReadOnlyCollection<UserDetails> users = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await mediator.Send(new GetUsersQuery());
+    }
+}

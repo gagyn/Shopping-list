@@ -1,0 +1,32 @@
+﻿@inherits MessageComponentBase
+@inject IMediator mediator
+
+<EditForm Model="@UserModel" OnSubmit="UpdateRole" FormName="@($"UserForm{UserModel.Id}")">
+    <InputText @bind-Value="UserModel.EmailAddress" disabled />
+    <InputSelect @bind-Value="UserModel.Role" placeholder="Wybierz rolę">
+        @foreach (var (name, description) in EnumExtensions.GetDescriptions<UserRole>())
+        {
+            <option value="@name">@description</option>
+        }
+    </InputSelect>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    <LockUserButton UserId="UserModel.Id" IsLocked="UserModel.IsLocked" OnUserLockedOrUnlocked="OnLockedOrUnlocked" />
+</EditForm>
+<div class="message">@message</div>
+
+@code {
+    [Parameter] public UserDetails UserModel { get; set; } = new();
+
+    private async Task UpdateRole()
+    {
+        await mediator.Send(new UpdateUserRoleCommand(UserModel.Id, UserModel.Role));
+        _ = ShowMessage("Zmieniono rolę.");
+    }
+
+    private void OnLockedOrUnlocked()
+    {
+        UserModel.IsLocked = !UserModel.IsLocked;
+        var message = UserModel.IsLocked ? "Zablokowano użytkownika." : "Odblokowano użytkownika.";
+        _ = ShowMessage(message);
+    }
+}

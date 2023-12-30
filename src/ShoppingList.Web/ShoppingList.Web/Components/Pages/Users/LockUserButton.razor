@@ -1,0 +1,31 @@
+﻿@inject IMediator mediator
+
+@rendermode InteractiveServer
+
+<button type="button" class="@buttonClass" @onclick="LockUnlockUser">@label</button>
+
+@code {
+    [Parameter] public Guid UserId { get; set; }
+    [Parameter] public bool IsLocked { get; set; }
+    [Parameter] public Action OnUserLockedOrUnlocked { get; set; } = () => { };
+
+    private const string LockUser = "Zablokuj użytkownika";
+    private const string UnlockUser = "Odblokuj użytkownika";
+    private const string LockUserClass = "btn btn-danger";
+    private const string UnlockUserClass = "btn btn-primary";
+
+    private string? buttonClass;
+    private string? label;
+
+    protected override void OnParametersSet()
+    {
+        label = IsLocked ? UnlockUser : LockUser;
+        buttonClass = IsLocked ? UnlockUserClass : LockUserClass;
+    }
+
+    private async Task LockUnlockUser()
+    {
+        await mediator.Send(new LockUnlockUserCommand(UserId));
+        OnUserLockedOrUnlocked();
+    }
+}

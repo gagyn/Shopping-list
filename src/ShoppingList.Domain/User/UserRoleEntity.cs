@@ -1,6 +1,6 @@
 ﻿namespace ShoppingList.Domain.User;
 public enum UserRoleEntity
 {
-    BasicUser,
+    BasicUser = 1,
     Administrator
 }
