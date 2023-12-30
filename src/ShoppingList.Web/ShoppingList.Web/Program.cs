@@ -15,6 +15,7 @@ using ShoppingList.Web.Components.Account;
 using ShoppingList.Web.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents()
