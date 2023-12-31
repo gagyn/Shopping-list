@@ -17,6 +17,11 @@ using ShoppingList.Web.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
+var appInsightsConnectionString = builder.Configuration.GetValue<string>("ApplicationInsights:ConnectionString");
+if (!string.IsNullOrEmpty(appInsightsConnectionString))
+{
+    builder.Services.AddApplicationInsightsTelemetry();
+}
 
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents()
