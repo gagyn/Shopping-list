@@ -5,6 +5,7 @@ using ShoppingList.Domain.Repositories;
 using ShoppingList.Domain.User;
 using ShoppingList.Infrastructure.Authentication;
 using ShoppingList.Infrastructure.Database;
+using ShoppingList.Infrastructure.Extensions;
 using ShoppingList.Infrastructure.QueryHandlers;
 using ShoppingList.Infrastructure.Repositories;
 using ShoppingList.Web.Authorization;
@@ -117,13 +118,15 @@ async Task InitializeDatabase(IServiceProvider serviceProvider)
 
     dbContext.Database.Migrate();
 
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-    var roles = new[] { UserRoleEntity.BasicUser, UserRoleEntity.Administrator };
-
-    if (await dbContext.Roles.AnyAsync())
+    var alreadyHasData = await dbContext.Roles.AnyAsync();
+    if (alreadyHasData)
     {
         return;
     }
+
+    var roles = new[] { UserRoleEntity.BasicUser, UserRoleEntity.Administrator };
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUserEntity>>();
 
     foreach (var role in roles)
     {
@@ -133,14 +136,30 @@ async Task InitializeDatabase(IServiceProvider serviceProvider)
         }
     }
 
-    if (await dbContext.Users.AnyAsync())
+    var isAnyUser = await dbContext.Users.AnyAsync();
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    if (isAnyUser)
     {
-        var basicUserRole = await dbContext.Roles.FirstAsync(x => x.Name == UserRoleEntity.BasicUser.ToString());
+        var basicUserRole = await roleManager.FindByNameAsync(UserRoleEntity.BasicUser);
         await dbContext.Users.ForEachAsync(x => dbContext.UserRoles.Add(new IdentityUserRole<Guid>
         {
             UserId = x.Id,
             RoleId = basicUserRole.Id
         }));
+    }
+    else if (configuration.GetValue<bool>("InitAdminUser"))
+    {
+        var adminRole = await roleManager.FindByNameAsync(UserRoleEntity.Administrator);
+        const string password = "123456";
+        const string username = "admin@admin.com";
+        var adminUser = new ApplicationUserEntity()
+        {
+            Email = username,
+            UserName = username
+        };
+        await userManager.CreateAsync(adminUser, password);
+        await userManager.AddToRoleAsync(adminUser, adminRole.Name!);
+        await userManager.SetLockoutEnabledAsync(adminUser, enabled: false);
     }
     await dbContext.SaveChangesAsync();
 }

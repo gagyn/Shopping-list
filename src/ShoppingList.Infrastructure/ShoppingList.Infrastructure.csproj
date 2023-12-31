@@ -21,4 +21,8 @@
     <ProjectReference Include="..\ShoppingList.DTO\ShoppingList.DTO.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
