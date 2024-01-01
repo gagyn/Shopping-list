@@ -1,4 +1,6 @@
-﻿namespace ShoppingList.DTO.Models;
+﻿using ShoppingList.DTO.Extensions;
+
+namespace ShoppingList.DTO.Models;
 public record IngredientDetails
 {
     public int? Id { get; set; }
@@ -6,6 +8,7 @@ public record IngredientDetails
     public string? Description { get; set; }
     public decimal? Amount { get; set; }
     public Unit Unit { get; set; } = Unit.Quantity;
+    public string UnitDescription => Unit.GetDescription();
 
     public IngredientDetails()
     {

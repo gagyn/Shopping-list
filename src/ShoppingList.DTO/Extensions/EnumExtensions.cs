@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace ShoppingList.Infrastructure.Extensions;
+namespace ShoppingList.DTO.Extensions;
 public static class EnumExtensions
 {
     public static TResult Parse<TResult>(this Enum sourceEnum) where TResult : struct, Enum
@@ -13,13 +13,18 @@ public static class EnumExtensions
     public static Dictionary<string, string> GetDescriptions<T>() where T : struct, Enum
     {
         var dict = new Dictionary<string, string>();
-        var names = Enum.GetNames<T>();
-        foreach (var name in names)
+        var names = Enum.GetValues<T>();
+        foreach (var enumValue in names)
         {
-            var field = typeof(T).GetField(name);
-            var fds = field!.GetCustomAttribute<DescriptionAttribute>(true);
-            dict.Add(name, fds!.Description);
+            dict.Add(enumValue.ToString(), enumValue.GetDescription());
         }
         return dict;
+    }
+
+    public static string GetDescription<T>(this T enumValue) where T : struct, Enum
+    {
+        var field = typeof(T).GetField(enumValue.ToString());
+        var fds = field!.GetCustomAttribute<DescriptionAttribute>(true);
+        return fds!.Description;
     }
 }

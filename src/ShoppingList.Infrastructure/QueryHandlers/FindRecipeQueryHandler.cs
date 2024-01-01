@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.Domain.Repositories;
+using ShoppingList.DTO.Extensions;
 using ShoppingList.DTO.Models;
 using ShoppingList.DTO.Queries;
 using ShoppingList.Infrastructure.Authentication;
 using ShoppingList.Infrastructure.Database;
-using ShoppingList.Infrastructure.Extensions;
 using Unit = ShoppingList.DTO.Models.Unit;
 
 namespace ShoppingList.Infrastructure.QueryHandlers;

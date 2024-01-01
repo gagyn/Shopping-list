@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using ShoppingList.Domain.Exceptions;
 using ShoppingList.Domain.ShoppingList;
+using ShoppingList.DTO.Extensions;
 using ShoppingList.DTO.Models;
 using ShoppingList.DTO.Queries;
 using ShoppingList.Infrastructure.Authentication;

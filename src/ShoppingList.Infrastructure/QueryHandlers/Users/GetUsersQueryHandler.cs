@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ShoppingList.DTO.Extensions;
 using ShoppingList.DTO.Models.Users;
 using ShoppingList.DTO.Queries.Users;
 using ShoppingList.Infrastructure.Database;
-using ShoppingList.Infrastructure.Extensions;
 
 namespace ShoppingList.Infrastructure.QueryHandlers.Users;
 public class GetUsersQueryHandler(

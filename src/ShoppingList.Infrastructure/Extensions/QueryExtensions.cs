@@ -2,5 +2,5 @@
 public static class QueryExtensions
 {
     public static string ShorterDescription(this string description)
-        => description.Length > 50 ? description.Substring(0, 50).Trim() + "..." : description;
+        => description.Length > 100 ? description.Substring(0, 100).Trim() + "..." : description;
 }

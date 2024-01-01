@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using ShoppingList.DTO.Extensions;
 using ShoppingList.DTO.Models.Users;
 using ShoppingList.DTO.Queries.Users;
 using ShoppingList.Infrastructure.Authentication;
 using ShoppingList.Infrastructure.Database;
-using ShoppingList.Infrastructure.Extensions;
 
 namespace ShoppingList.Infrastructure.QueryHandlers.Users;
 

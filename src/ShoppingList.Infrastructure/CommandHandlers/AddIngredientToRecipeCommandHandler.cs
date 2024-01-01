@@ -3,8 +3,8 @@ using ShoppingList.Domain.Recipe;
 using ShoppingList.Domain.Repositories;
 using ShoppingList.Domain.ShoppingList;
 using ShoppingList.DTO.Commands;
+using ShoppingList.DTO.Extensions;
 using ShoppingList.Infrastructure.Authentication;
-using ShoppingList.Infrastructure.Extensions;
 
 namespace ShoppingList.Infrastructure.CommandHandlers;
 
@@ -24,7 +24,7 @@ public class AddIngredientToRecipeCommandHandler(
             request.RecipeId);
 
         recipe.AddIngredient(ingredient, userAccessor.UserName);
-        
+
         await recipeRepository.SaveChanges(cancellationToken);
         return ingredient.Id;
     }

@@ -2,7 +2,7 @@
 using ShoppingList.Domain.Repositories;
 using ShoppingList.Domain.ShoppingList;
 using ShoppingList.DTO.Commands;
-using ShoppingList.Infrastructure.Extensions;
+using ShoppingList.DTO.Extensions;
 
 namespace ShoppingList.Infrastructure.CommandHandlers;
 
