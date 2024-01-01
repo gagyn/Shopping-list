@@ -1,9 +1,9 @@
-﻿@inject NavigationManager Nav
+﻿@inherits MessageComponentBase
+@inject NavigationManager Nav
 @inject IMediator Mediator
 
 @page "/shopping-list"
 @page "/shopping-list/{ShoppingListId:int}"
-@rendermode InteractiveServer
 
 @if (ShoppingListModel is null)
 {
@@ -14,6 +14,10 @@
 <EditForm Model="@ShoppingListModel" OnSubmit="AddOrUpdateShoppingList" FormName="ShoppingListForm">
     <InputText @bind-Value="ShoppingListModel.Name" placeholder="Wprowadź nazwę nowej listy" />
     <button type="submit" class="btn btn-primary">Zapisz</button>
+    @if (ShoppingListId is not null)
+    {
+        <button type="button" class="btn btn-danger" @onclick="RemoveList">Usuń listę zakupów</button>
+    }
 </EditForm>
 <div class="message">@message</div>
 
@@ -30,8 +34,6 @@
 @code {
     [Parameter] public int? ShoppingListId { get; set; }
     [SupplyParameterFromForm] private ShoppingListDetails? ShoppingListModel { get; set; }
-
-    string? message;
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,12 +53,12 @@
         if (ShoppingListId is null)
         {
             ShoppingListId = await Mediator.Send(new CreateShoppingListCommand(ShoppingListModel!.Name!));
-            ShowMessage("Stworzono nową listę.");
+            _ = ShowMessage("Stworzono nową listę.");
         }
         else
         {
             await Mediator.Send(new UpdateShoppingListCommand(ShoppingListModel!.Id, ShoppingListModel!.Name!));
-            ShowMessage("Zmieniono nazwę listy.");
+            _ = ShowMessage("Zmieniono nazwę listy.");
         }
     }
 
@@ -72,11 +74,11 @@
         StateHasChanged();
     }
 
-    private async void ShowMessage(string message)
+    private async Task RemoveList()
     {
-        this.message = message;
-        await Task.Delay(2000);
-        this.message = null;
-        this.StateHasChanged();
+        var command = new RemoveShoppingList(ShoppingListId!.Value);
+        await Mediator.Send(command);
+        await ShowMessage("Usunięto listę zakupów.");
+        Nav.NavigateTo("/manage-recipes");
     }
 }

@@ -8,6 +8,7 @@ using ShoppingList.Infrastructure.Database;
 using ShoppingList.Infrastructure.Extensions;
 using ShoppingList.Infrastructure.QueryHandlers;
 using ShoppingList.Infrastructure.Repositories;
+using ShoppingList.Web.Authentication;
 using ShoppingList.Web.Authorization;
 using ShoppingList.Web.Client.Pages;
 using ShoppingList.Web.Client.Services;
@@ -89,7 +90,7 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Auth).Assembly);
+    .AddAdditionalAssemblies(typeof(Recipies).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

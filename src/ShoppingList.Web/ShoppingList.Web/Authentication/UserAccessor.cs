@@ -1,8 +1,9 @@
 ﻿using ShoppingList.Domain.User;
 using ShoppingList.DTO.Exceptions;
+using ShoppingList.Infrastructure.Authentication;
 using System.Security.Claims;
 
-namespace ShoppingList.Infrastructure.Authentication;
+namespace ShoppingList.Web.Authentication;
 
 public class UserAccessor(IHttpContextAccessor accessor) : IUserAccessor
 {
