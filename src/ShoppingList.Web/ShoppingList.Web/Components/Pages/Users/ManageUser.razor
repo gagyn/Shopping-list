@@ -1,6 +1,8 @@
 ﻿@inherits MessageComponentBase
 @inject IMediator mediator
 
+@attribute [Authorize(Policies.Administrator)]
+
 <EditForm Model="@UserModel" OnSubmit="UpdateRole" FormName="@($"UserForm{UserModel.Id}")">
     <InputText @bind-Value="UserModel.EmailAddress" disabled />
     <InputSelect @bind-Value="UserModel.Role" placeholder="Wybierz rolę">

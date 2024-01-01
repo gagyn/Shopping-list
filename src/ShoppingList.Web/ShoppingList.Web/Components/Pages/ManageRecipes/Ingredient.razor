@@ -2,6 +2,8 @@
 @inject NavigationManager Nav
 @inject IMediator mediator
 
+@attribute [Authorize(Policies.Administrator)]
+
 <EditForm Model="@IngredientModel" OnSubmit="AddOrUpdateIngredient" FormName="@($"IngredientForm{IngredientModel.Id}")">
     <InputText @bind-Value="IngredientModel.Name" placeholder="Podaj nazwę składnika" />
     <InputNumber @bind-Value="IngredientModel.Amount" placeholder="Podaj ilość tego składnika" />

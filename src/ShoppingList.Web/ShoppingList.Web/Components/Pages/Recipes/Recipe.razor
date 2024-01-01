@@ -1,17 +1,22 @@
 ﻿@inherits MessageComponentBase
 @inject NavigationManager nav
+@inject IUserAccessor userAccessor
 @inject IMediator mediator
 
+@attribute [AllowAnonymous]
 @page "/recipe/{RecipeId:int}"
 
 <PageTitle>@recipeDetails.Name</PageTitle>
 
 <h4>@recipeDetails.Name</h4>
-<CreateShoppingListFromRecipeButton RecipeId="RecipeId" />
-<MarkRecipeAsFavoriteButton 
-    RecipeId="RecipeId"
-    MarkedAsFavorite="recipeDetails.MarkedAsFavorite"
-    OnMarkedAsFavorite="OnMarkedAsFavorite" />
+@if (userAccessor.IsAuthenticated)
+{
+    <CreateShoppingListFromRecipeButton RecipeId="RecipeId" />
+    <MarkRecipeAsFavoriteButton
+        RecipeId="RecipeId"
+        MarkedAsFavorite="recipeDetails.MarkedAsFavorite"
+        OnMarkedAsFavorite="OnMarkedAsFavorite" />
+}
 <div class="message">@message</div>
 
 <p>@recipeDetails.Description</p>

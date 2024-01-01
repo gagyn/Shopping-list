@@ -17,7 +17,7 @@ public class FindRecipeQueryHandler(
 {
     public async Task<RecipeDetails> Handle(FindRecipeQuery request, CancellationToken cancellationToken)
     {
-        var isFavorite = await dbContext.Users
+        var isFavorite = userAccessor.IsAuthenticated && await dbContext.Users
             .AnyAsync(x => x.Id == userAccessor.Id && x.FavoriteRecipes.Any(x => x.RecipeId == request.Id), cancellationToken);
 
         var recipe = await recipeRepository.FindOrThrow(request.Id, cancellationToken);

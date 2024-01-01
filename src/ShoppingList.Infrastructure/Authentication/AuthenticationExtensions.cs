@@ -11,6 +11,12 @@ public static class AuthenticationExtensions
         return state.GetUserName();
     }
 
+    public static async Task<Guid> GetUserId(this AuthenticationStateProvider stateProvider)
+    {
+        var state = await stateProvider.GetAuthenticationStateAsync();
+        return state.GetUserId();
+    }
+
     public static string GetUserName(this AuthenticationState state)
         => state.User.FindFirst(ClaimTypes.Email)?.Value ?? throw new UnauthorizeException();
 
