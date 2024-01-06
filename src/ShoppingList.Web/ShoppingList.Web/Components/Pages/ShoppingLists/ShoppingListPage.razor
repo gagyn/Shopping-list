@@ -79,6 +79,6 @@
         var command = new RemoveShoppingList(ShoppingListId!.Value);
         await Mediator.Send(command);
         await ShowMessage("Usunięto listę zakupów.");
-        Nav.NavigateTo("/manage-recipes");
+        Nav.NavigateTo("/my-shopping-lists");
     }
 }
